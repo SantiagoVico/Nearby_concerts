@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'services/api_service.dart';
 import 'models/concert.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'widgets/concert_card.dart';
 
-void main() => runApp(const MaterialApp(home: ConcertListScreen()));
+void main() async {
+  // Wait for flutter to be ready and load environment variables
+  WidgetsFlutterBinding.ensureInitialized();
+  // Load the .env file to access the API key
+  await dotenv.load();
+  // Now we can run the app
+  runApp(const MaterialApp(home: ConcertListScreen()));
+}
 
 class ConcertListScreen extends StatefulWidget {
   const ConcertListScreen({super.key});
@@ -14,7 +22,7 @@ class ConcertListScreen extends StatefulWidget {
 
 class _ConcertListScreenState extends State<ConcertListScreen> {
   late Future<List<Concert>> _concertsFuture;
-  double _radius = 50; // 👈 Distance par défaut
+  double _radius = 50; // Default radius in km
 
   @override
   void initState() {
@@ -22,7 +30,7 @@ class _ConcertListScreenState extends State<ConcertListScreen> {
     _concertsFuture = ApiService.fetchConcerts(radius: _radius.toInt());
   }
 
-  // Fonction pour recharger les données
+  // Refresh the concerts list with the current radius
   void _refreshConcerts() {
     setState(() {
       _concertsFuture = ApiService.fetchConcerts(radius: _radius.toInt());
@@ -45,15 +53,15 @@ class _ConcertListScreenState extends State<ConcertListScreen> {
                     value: _radius,
                     min: 10,
                     max: 200,
-                    divisions: 19, // Un cran tous les 10km
+                    divisions: 19,
                     label: "${_radius.toInt()} km",
                     onChanged: (value) {
                       setState(() {
-                        _radius = value; // Met à jour le texte en direct
+                        _radius = value; // Live text update
                       });
                     },
                     onChangeEnd: (value) {
-                      _refreshConcerts(); // Appelle l'API quand on lâche le doigt
+                      _refreshConcerts();
                     },
                   ),
                 ),
@@ -61,7 +69,6 @@ class _ConcertListScreenState extends State<ConcertListScreen> {
             ),
           ),
           
-          // La liste prend le reste de l'espace
           Expanded(
             child: FutureBuilder<List<Concert>>(
               future: _concertsFuture,
