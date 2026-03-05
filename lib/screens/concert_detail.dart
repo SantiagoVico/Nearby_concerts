@@ -103,7 +103,30 @@ class ConcertDetailScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                  
                   ),
+                  const SizedBox(height: 15),
+                  // NOUVEAU BOUTON : Voir sur la carte
+                  if (concert.latitude != null && concert.longitude != null)
+                    Center(
+                      child: OutlinedButton.icon(
+                        onPressed: () async {
+                          // Crée un lien universel Google Maps avec les coordonnées
+                          final Uri mapUrl = Uri.parse(
+                            'https://www.google.com/maps/search/?api=1&query=${concert.latitude},${concert.longitude}'
+                          );
+                          
+                          if (await canLaunchUrl(mapUrl)) {
+                            await launchUrl(mapUrl, mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        icon: const Icon(Icons.map, color: Colors.indigo),
+                        label: const Text("Voir sur la carte", style: TextStyle(color: Colors.indigo)),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
