@@ -31,16 +31,18 @@ class ApiService {
         "&radius=$radius"
         "&unit=km"
         "&locale=fr"
-        "&classificationName=music";
+        "&classificationName=music"
+        "&sort=date,asc";
 
     // Make the HTTP GET request
     final response = await http.get(Uri.parse(url));
-    
+
     // Check the response status and parse the data
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List events = data['_embedded']?['events'] ?? [];
       
+      // List to hold the parsed concerts
       List<Concert> concerts = [];
       
       for (var eventJson in events) {

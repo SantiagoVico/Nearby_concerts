@@ -12,11 +12,11 @@ class ConcertDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(concert.name)),
       body: SingleChildScrollView(
-        // Permet de scroller si l'écran est petit
+        // Scrollable for smaller screens
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // L'image en grand
+            // Big image at the top
             Image.network(concert.imageUrl, height: 250, fit: BoxFit.cover),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -55,24 +55,24 @@ class ConcertDetailScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 30),
-                  // Le bouton d'achat
+                  // Buy Tickets Button
                   Center(
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        // 1. On vérifie si le lien existe
+                        // Check for existence of ticket URL
                         if (concert.ticketUrl.isNotEmpty) {
                           final Uri url = Uri.parse(concert.ticketUrl);
 
-                          // 2. On vérifie si le téléphone peut ouvrir ce lien
+                          // Check if the device can open the URL (safety check)
                           if (await canLaunchUrl(url)) {
-                            // 3. On ouvre le navigateur externe du téléphone
+                            // Open the URL in the default browser (not in-app)
                             await launchUrl(
                               url,
                               mode: LaunchMode
-                                  .externalApplication, // Ouvre Chrome/Safari et non l'app elle-même
+                                  .externalApplication,
                             );
                           } else {
-                            // Message d'erreur si le téléphone n'y arrive pas
+                            // Error handling if the URL cannot be opened
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -84,7 +84,7 @@ class ConcertDetailScreen extends StatelessWidget {
                             }
                           }
                         } else {
-                          // Message si Ticketmaster n'a pas fourni de lien
+                          // Inform the user if no ticket URL is available
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
